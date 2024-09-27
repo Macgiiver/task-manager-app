@@ -1,0 +1,60 @@
+<div class="container mt-4">
+    <h3 class="text-primary mb-4">Lista de Tareas</h3>
+
+    <div class="mb-3">
+        <input
+            type="text"
+            class="form-control"
+            placeholder="Buscar tarea por título"
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="filterTasks()"
+        />
+    </div>
+
+    <div class="mb-3">
+        <select
+            class="form-control"
+            [(ngModel)]="filterStatus"
+            (change)="filterTasks()"
+        >
+            <option value="all">Todas</option>
+            <option value="completed">Completadas</option>
+            <option value="pending">Pendientes</option>
+        </select>
+    </div>
+
+    <ul
+        class="list-group"
+        *ngIf="filteredTasks.length > 0"
+    >
+        <li
+            *ngFor="let task of filteredTasks"
+            class="list-group-item"
+        >
+            <strong>Título:</strong> {{ task.title }}<br />
+            <strong>Fecha Límite:</strong> {{ task.deadline | date: 'dd/MM/yyyy' }}<br />
+            <strong>Estado:</strong> {{ task.completed ? 'Completada' : 'Pendiente' }}<br />
+            <strong>Personas:</strong>
+            <ul class="list-group mt-2">
+                <li
+                    *ngFor="let person of task.persons"
+                    class="list-group-item"
+                >
+                    {{ person.name }} (Edad: {{ person.age }})
+                    <ul class="list-group mt-1">
+                        <li
+                            *ngFor="let skill of person.skills"
+                            class="list-group-item"
+                        >
+                            Habilidad: {{ skill }}
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+    <div *ngIf="filteredTasks.length === 0">
+        <p class="text-muted">No hay tareas disponibles.</p>
+    </div>
+</div>

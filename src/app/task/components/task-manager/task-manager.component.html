@@ -1,0 +1,151 @@
+<div class="container mt-5">
+    <h2>Crear nueva tarea</h2>
+    <form
+        [formGroup]="taskForm"
+        (ngSubmit)="submitTask()"
+    >
+
+        <div class="mb-3">
+            <label
+                for="title"
+                class="form-label"
+            >Título de la tarea:</label>
+            <input
+                id="title"
+                formControlName="title"
+                class="form-control"
+            />
+            <div
+                *ngIf="taskForm.get('title')?.invalid && taskForm.get('title')?.touched"
+                class="text-danger"
+            >
+                El título es obligatorio y debe ser superior a 5 caracteres
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label
+                for="deadline"
+                class="form-label"
+            >Fecha límite:</label>
+            <input
+                id="deadline"
+                formControlName="deadline"
+                type="date"
+                class="form-control"
+            />
+            <div
+                *ngIf="taskForm.get('deadline')?.invalid && taskForm.get('deadline')?.touched"
+                class="text-danger"
+            >
+                La fecha límite es obligatoria y debe ser igual o posterior a la fecha actual.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Estado de la tarea:</label>
+            <div class="form-check">
+                <input
+                    id="status"
+                    formControlName="status"
+                    type="checkbox"
+                    class="form-check-input"
+                />
+                <label
+                    class="form-check-label"
+                    for="status"
+                >Marcar como completa</label>
+            </div>
+        </div>
+
+        <h3>Personas</h3>
+        <button
+            (click)="addPerson()"
+            type="button"
+            class="btn btn-primary mb-3"
+        >Añadir Persona</button>
+
+        <div
+            formArrayName="persons"
+            *ngFor="let person of persons.controls; let i = index"
+            class="mb-3"
+        >
+            <div
+                [formGroupName]="i"
+                class="border p-3 rounded"
+            >
+
+                <label
+                    for="name-{{ i }}"
+                    class="form-label"
+                >Nombre Completo:</label>
+                <input
+                    id="name-{{ i }}"
+                    formControlName="name"
+                    class="form-control"
+                />
+                <div
+                    *ngIf="person.get('name')?.invalid && person.get('name')?.touched"
+                    class="text-danger"
+                >
+                    El nombre es obligatorio y debe tener al menos 5 caracteres
+                </div>
+
+                <label
+                    for="age-{{ i }}"
+                    class="form-label"
+                >Edad:</label>
+                <input
+                    id="age-{{ i }}"
+                    formControlName="age"
+                    class="form-control"
+                />
+                <div
+                    *ngIf="person.get('age')?.invalid && person.get('age')?.touched"
+                    class="text-danger"
+                >
+                    La edad debe ser mayor de 18 años
+                </div>
+
+                <h4>Habilidades</h4>
+                <div
+                    formArrayName="skills"
+                    *ngFor="let skill of getSkillsControl(i).controls; let j = index"
+                >
+                    <input
+                        [formControlName]="j"
+                        class="form-control mb-2"
+                    />
+                    <div
+                        *ngIf="skill.invalid && skill.touched"
+                        class="text-danger"
+                    >
+                        La habilidad es obligatoria
+                    </div>
+                    <button
+                        type="button"
+                        (click)="removeSkill(i, j)"
+                        class="btn btn-danger btn-sm"
+                    >Eliminar Habilidad</button>
+                </div>
+                <button
+                    type="button"
+                    (click)="addSkill(i)"
+                    class="btn btn-secondary mb-4"
+                >Añadir Habilidad</button>
+            </div>
+            <button
+                type="button"
+                (click)="removePerson(i)"
+                class="btn btn-danger mt-2"
+            >Eliminar Persona</button>
+        </div>
+
+
+        <button
+            type="submit"
+            [disabled]="taskForm.invalid"
+            class="btn btn-success mb-3"
+        >Crear Tarea</button>
+    </form>
+</div>
