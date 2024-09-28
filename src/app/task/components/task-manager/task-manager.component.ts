@@ -98,7 +98,20 @@ export class TaskManagerComponent {
 
   submitTask() {
     if (this.taskForm.valid) {
-
+      const hasEmptySkills = this.persons.controls.some((person) => {
+        const skillsArray = person.get('skills') as FormArray;
+        return skillsArray.length === 0 || skillsArray.controls.every(skill => skill.value.trim() === '');
+      });
+      if (hasEmptySkills) {
+        Swal.fire({
+          title: '¡No Existen Habilidades!',
+          text: `La pesona que agregas debe tener al menos 1 habilidad.`,
+          icon: 'warning',
+          confirmButtonText: 'Aceptar'
+        });
+        return;
+      }
+      console.log('data', this.taskForm.value);
       const capitalizedTitle = this.capitalize(this.taskForm.value.title);
       const capitalizedPersons = this.taskForm.value.persons.map((person: { name: string; age: number; skills: string[] }) => ({
         ...person,
@@ -110,18 +123,21 @@ export class TaskManagerComponent {
       if (hasDuplicates) {
         return;
       }
+
       this.taskService.addTask({
         title: capitalizedTitle,
         persons: capitalizedPersons,
         deadline: this.taskForm.value.deadline,
         completed: this.taskForm.value.status
       });
-      this.showAlert(environment.alerts.successTitle, environment.alerts.successMessage);
+
+      this.showAlert(environment.alerts.success.title, environment.alerts.success.message);
 
       this.taskForm.reset();
       this.taskForm.setControl('persons', this.fb.array([]));
     }
   }
+
 
   capitalize(value: string): string {
     if (!value) return '';
