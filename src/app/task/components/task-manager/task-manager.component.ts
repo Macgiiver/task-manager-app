@@ -37,14 +37,9 @@ export class TaskManagerComponent {
   }
 
   ngOnInit(): void {
-    this.taskForm.statusChanges.subscribe((status) => {
-      console.log('Estado del formulario:', status);
-    });
-
     this.taskForm.get('deadline')?.valueChanges.subscribe((value) => {
-      console.log('Valor de deadline:', value);
-      this.currentDeadline = value; // Actualizar la propiedad
-      this.checkDeadlineValidity(this.currentDeadline); // Llamar al método para verificar la validez
+      this.currentDeadline = value;
+      this.checkDeadlineValidity(this.currentDeadline);
     })
 
   }
@@ -58,7 +53,7 @@ export class TaskManagerComponent {
         const formattedDate = selectedDate.format('DD/MM/YYYY');
         Swal.fire({
           title: '¡Fecha No Vigente!',
-          text: `La fecha: ${formattedDate}. no es validad.`,
+          text: `La fecha: ${formattedDate}. no es valida.`,
           icon: 'warning',
           confirmButtonText: 'Aceptar'
         });
