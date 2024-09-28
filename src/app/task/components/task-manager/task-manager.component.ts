@@ -2,6 +2,11 @@ import { Component } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { TaskService } from 'src/app/services/task.service';
 import Swal from 'sweetalert2';
+import * as moment from 'moment';
+import 'moment-timezone';
+import { environment } from 'src/environments/environment';
+
+
 
 @Component({
   selector: 'app-task-manager',
@@ -11,6 +16,7 @@ import Swal from 'sweetalert2';
 export class TaskManagerComponent {
 
   taskForm: FormGroup;
+  currentDeadline: string | null = null;
 
   constructor(private fb: FormBuilder, private taskService: TaskService) {
     this.taskForm = this.fb.group({
@@ -34,7 +40,33 @@ export class TaskManagerComponent {
     this.taskForm.statusChanges.subscribe((status) => {
       console.log('Estado del formulario:', status);
     });
+
+    this.taskForm.get('deadline')?.valueChanges.subscribe((value) => {
+      console.log('Valor de deadline:', value);
+      this.currentDeadline = value; // Actualizar la propiedad
+      this.checkDeadlineValidity(this.currentDeadline); // Llamar al método para verificar la validez
+    })
+
   }
+
+  checkDeadlineValidity(deadline: string | null) {
+    if (deadline) {
+      const selectedDate = moment.tz(deadline, 'America/Bogota');
+      const currentDate = moment.tz(new Date(), 'America/Bogota');
+
+      if (selectedDate.isBefore(currentDate, 'day')) {
+        const formattedDate = selectedDate.format('DD/MM/YYYY');
+        Swal.fire({
+          title: '¡Fecha No Vigente!',
+          text: `La fecha: ${formattedDate}. no es validad.`,
+          icon: 'warning',
+          confirmButtonText: 'Aceptar'
+        });
+        this.taskForm.get('deadline')?.setValue(null);
+      }
+    }
+  }
+
 
   numberOnlyValidator = (): ValidatorFn => {
     return (control: AbstractControl): { [key: string]: any } | null => {
@@ -81,7 +113,6 @@ export class TaskManagerComponent {
 
       const hasDuplicates = this.checkForDuplicateNames(capitalizedPersons);
       if (hasDuplicates) {
-        console.warn('Se encontraron nombres duplicados.');
         return;
       }
       this.taskService.addTask({
@@ -90,8 +121,10 @@ export class TaskManagerComponent {
         deadline: this.taskForm.value.deadline,
         completed: this.taskForm.value.status
       });
+      this.showAlert(environment.alerts.successTitle, environment.alerts.successMessage);
 
       this.taskForm.reset();
+      this.taskForm.setControl('persons', this.fb.array([]));
     }
   }
 
@@ -135,5 +168,16 @@ export class TaskManagerComponent {
   getSkillsControl(personIndex: number) {
     return this.taskForm.get(['persons', personIndex, 'skills']) as FormArray;
   }
+
+  showAlert(title: string, message: string) {
+    Swal.fire({
+      title: title,
+      text: message,
+      icon: 'success',
+      confirmButtonText: 'Aceptar'
+    });
+  }
+
+
 
 }
