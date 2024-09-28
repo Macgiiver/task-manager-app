@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { TaskService } from 'src/app/services/task.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-task-manager',
@@ -69,7 +70,6 @@ export class TaskManagerComponent {
   }
 
   submitTask() {
-    console.log('ejecuta boton', this.taskForm.value);
     if (this.taskForm.valid) {
 
       const capitalizedTitle = this.capitalize(this.taskForm.value.title);
@@ -79,6 +79,11 @@ export class TaskManagerComponent {
         skills: person.skills.map(skill => this.capitalize(skill))
       }));
 
+      const hasDuplicates = this.checkForDuplicateNames(capitalizedPersons);
+      if (hasDuplicates) {
+        console.warn('Se encontraron nombres duplicados.');
+        return;
+      }
       this.taskService.addTask({
         title: capitalizedTitle,
         persons: capitalizedPersons,
@@ -93,6 +98,37 @@ export class TaskManagerComponent {
   capitalize(value: string): string {
     if (!value) return '';
     return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+  }
+
+
+  checkForDuplicateNames(persons: { name: string; age: number; skills: string[] }[]): boolean {
+    const nameSet = new Set<string>();
+    const duplicates = new Set<string>();
+
+    for (const person of persons) {
+      if (nameSet.has(person.name)) {
+        duplicates.add(person.name);
+      } else {
+        nameSet.add(person.name);
+      }
+    }
+
+    if (duplicates.size > 0) {
+      this.showDuplicateAlert(Array.from(duplicates));
+      return true;
+    }
+
+    return false;
+  }
+
+  showDuplicateAlert(duplicateNames: string[]) {
+    const namesList = duplicateNames.join(', ');
+    Swal.fire({
+      title: '¡Nombres Duplicados!',
+      text: `Los siguientes nombres ya están registrados: ${namesList}. Por favor, utiliza nombres diferentes.`,
+      icon: 'warning',
+      confirmButtonText: 'Aceptar'
+    });
   }
 
 
