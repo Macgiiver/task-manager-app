@@ -1,7 +1,13 @@
 export const environment = {
-  production: true,
+  production: false,
   alerts: {
-    successTitle: 'Operación Exitosa',
-    successMessage: 'La operación se realizó correctamente.',
+    success: {
+      title: 'Operación Exitosa',
+      message: 'La operación se realizó correctamente.'
+    },
+    error: {
+      title: 'Error en la Operación',
+      message: 'Se ha producido un error. Por favor, verifica los datos ingresados.'
+    }
   }
 };

@@ -5,13 +5,17 @@ import Swal from 'sweetalert2';
 import * as moment from 'moment';
 import 'moment-timezone';
 import { environment } from 'src/environments/environment';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 
 @Component({
   selector: 'app-task-manager',
+  standalone: true,
   templateUrl: './task-manager.component.html',
-  styleUrls: ['./task-manager.component.css']
+  styleUrls: ['./task-manager.component.css'],
+  imports: [CommonModule, ReactiveFormsModule]
 })
 export class TaskManagerComponent {
 
@@ -111,7 +115,6 @@ export class TaskManagerComponent {
         });
         return;
       }
-      console.log('data', this.taskForm.value);
       const capitalizedTitle = this.capitalize(this.taskForm.value.title);
       const capitalizedPersons = this.taskForm.value.persons.map((person: { name: string; age: number; skills: string[] }) => ({
         ...person,
