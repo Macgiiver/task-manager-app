@@ -1,0 +1,24 @@
+.navbar {
+    margin-bottom: 20px;
+    /* Espaciado debajo del menú */
+}
+
+.navbar-nav .nav-link {
+    margin-right: 15px;
+    /* Espaciado entre los enlaces */
+}
+
+.navbar-brand {
+    font-weight: bold;
+    /* Hacer la marca más destacada */
+}
+
+
+/* Espaciado en pantallas más pequeñas */
+
+@media (max-width: 768px) {
+    .navbar-nav .nav-link {
+        margin-right: 10px;
+        /* Menor espaciado en pantallas pequeñas */
+    }
+}

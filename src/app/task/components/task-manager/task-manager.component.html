@@ -1,10 +1,10 @@
 <div class="container mt-5">
+
     <h2>Crear nueva tarea</h2>
     <form
         [formGroup]="taskForm"
         (ngSubmit)="submitTask()"
     >
-
         <div class="mb-3">
             <label
                 for="title"
@@ -74,7 +74,6 @@
                 [formGroupName]="i"
                 class="border p-3 rounded"
             >
-
                 <label
                     for="name-{{ i }}"
                     class="form-label"
@@ -141,11 +140,11 @@
             >Eliminar Persona</button>
         </div>
 
-
         <button
             type="submit"
             [disabled]="taskForm.invalid"
             class="btn btn-success mb-3"
         >Crear Tarea</button>
     </form>
+
 </div>
